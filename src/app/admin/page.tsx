@@ -1,12 +1,32 @@
 'use client';
 
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { DollarSign, Users, Briefcase, Activity } from "lucide-react";
+import { Button } from '@/components/ui/button';
+import { DollarSign, Users, Briefcase, Activity, PlusCircle, MoreHorizontal, Trash2, Edit } from "lucide-react";
 import { useCollection, useFirebase, useMemoFirebase } from '@/firebase';
-import { collection, query } from 'firebase/firestore';
+import { collection, query, doc } from 'firebase/firestore';
 import type { Project } from '@/lib/data';
+import { EditProjectDialog } from '@/components/edit-project-dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { setDocumentNonBlocking, deleteDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 
 const stats = [
     { title: "Total Revenue", value: "$45,231.89", icon: <DollarSign className="h-4 w-4 text-muted-foreground" />, change: "+20.1% from last month" },
@@ -24,6 +44,47 @@ export default function AdminPage() {
     }, [firestore, user]);
 
     const { data: projects, isLoading } = useCollection<Project>(projectsQuery);
+
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+    const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+
+    const handleAddProject = () => {
+        setSelectedProject(null);
+        setIsDialogOpen(true);
+    };
+
+    const handleEditProject = (project: Project) => {
+        setSelectedProject(project);
+        setIsDialogOpen(true);
+    };
+    
+    const handleDeleteProject = (project: Project) => {
+        setSelectedProject(project);
+        setIsDeleteDialogOpen(true);
+    }
+
+    const handleSaveProject = (project: Project) => {
+        if (!user || !firestore) return;
+        const projectRef = doc(firestore, 'users', user.uid, 'projects', project.id);
+        
+        // This is a "non-blocking" operation. We don't wait for it to complete.
+        setDocumentNonBlocking(projectRef, project, { merge: true });
+        
+        setIsDialogOpen(false);
+        setSelectedProject(null);
+    };
+
+    const confirmDelete = () => {
+        if (!user || !firestore || !selectedProject) return;
+        const projectRef = doc(firestore, 'users', user.uid, 'projects', selectedProject.id);
+
+        // This is a "non-blocking" operation.
+        deleteDocumentNonBlocking(projectRef);
+
+        setIsDeleteDialogOpen(false);
+        setSelectedProject(null);
+    };
 
     return (
         <div className="space-y-8">
@@ -43,9 +104,15 @@ export default function AdminPage() {
             </div>
 
             <Card>
-                <CardHeader>
-                    <CardTitle>Recent Projects</CardTitle>
-                    <CardDescription>A list of the most recently added projects.</CardDescription>
+                <CardHeader className="flex flex-row items-center justify-between">
+                    <div>
+                        <CardTitle>Recent Projects</CardTitle>
+                        <CardDescription>A list of the most recently added projects.</CardDescription>
+                    </div>
+                    <Button size="sm" onClick={handleAddProject}>
+                        <PlusCircle className="mr-2 h-4 w-4" />
+                        Add Project
+                    </Button>
                 </CardHeader>
                 <CardContent>
                     <Table>
@@ -54,15 +121,16 @@ export default function AdminPage() {
                                 <TableHead>Project</TableHead>
                                 <TableHead className="hidden md:table-cell">Tags</TableHead>
                                 <TableHead>Status</TableHead>
+                                <TableHead><span className="sr-only">Actions</span></TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             {isLoading && (
                                 <TableRow>
-                                    <TableCell colSpan={3} className="text-center">Loading projects...</TableCell>
+                                    <TableCell colSpan={4} className="text-center">Loading projects...</TableCell>
                                 </TableRow>
                             )}
-                            {projects && projects.slice(0, 5).map((project) => (
+                            {projects && projects.map((project) => (
                                 <TableRow key={project.id}>
                                     <TableCell>
                                         <div className="font-medium">{project.title}</div>
@@ -78,17 +146,55 @@ export default function AdminPage() {
                                     <TableCell>
                                         <Badge variant="outline">Live</Badge>
                                     </TableCell>
+                                    <TableCell>
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger asChild>
+                                                <Button aria-haspopup="true" size="icon" variant="ghost">
+                                                    <MoreHorizontal className="h-4 w-4" />
+                                                    <span className="sr-only">Toggle menu</span>
+                                                </Button>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent align="end">
+                                                <DropdownMenuItem onSelect={() => handleEditProject(project)}><Edit className="mr-2 h-4 w-4" /> Edit</DropdownMenuItem>
+                                                <DropdownMenuItem onSelect={() => handleDeleteProject(project)} className="text-destructive focus:text-destructive"><Trash2 className="mr-2 h-4 w-4" /> Delete</DropdownMenuItem>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
+                                    </TableCell>
                                 </TableRow>
                             ))}
                             {!isLoading && (!projects || projects.length === 0) && (
                                 <TableRow>
-                                    <TableCell colSpan={3} className="text-center">No projects found.</TableCell>
+                                    <TableCell colSpan={4} className="text-center">No projects found.</TableCell>
                                 </TableRow>
                             )}
                         </TableBody>
                     </Table>
                 </CardContent>
             </Card>
+
+            <EditProjectDialog
+                isOpen={isDialogOpen}
+                onClose={() => setIsDialogOpen(false)}
+                project={selectedProject}
+                onSave={handleSaveProject}
+            />
+
+            <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                        This action cannot be undone. This will permanently delete the
+                        project from your portfolio.
+                    </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={confirmDelete}>Continue</AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+
         </div>
     );
 }
