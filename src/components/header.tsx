@@ -7,6 +7,7 @@ import { Menu, Feather } from "lucide-react";
 import { useState } from "react";
 
 const navLinks = [
+  { href: "/admin", label: "Admin" },
   { href: "#projects", label: "Projects" },
   { href: "#ai-review", label: "AI Review" },
   { href: "#contact", label: "Contact" },
