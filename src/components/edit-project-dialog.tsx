@@ -22,7 +22,7 @@ interface EditProjectDialogProps {
   onSave: (project: Project) => void;
 }
 
-const emptyProject: Omit<Project, 'id'> = {
+const emptyProject: Omit<Project, 'id' | 'userProfileId'> = {
   title: '',
   description: '',
   image: 'project-1', // Default placeholder
@@ -37,7 +37,7 @@ export function EditProjectDialog({
   onClose,
   onSave,
 }: EditProjectDialogProps) {
-  const [formData, setFormData] = useState<Omit<Project, 'id'>>(
+  const [formData, setFormData] = useState<Omit<Project, 'id' | 'userProfileId'>>(
     project || emptyProject
   );
 
@@ -65,7 +65,7 @@ export function EditProjectDialog({
       // If it's a new project, create a new ID, otherwise use existing one.
       id: project?.id || new Date().getTime().toString(),
     };
-    onSave(finalProject);
+    onSave(finalProject as Project);
     onClose();
   };
 
