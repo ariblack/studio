@@ -1,3 +1,46 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "profile-picture",
+      "description": "A professional headshot of a person.",
+      "imageUrl": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxwcm9mZXNzaW9uYWwlMjBoZWFkc2hvdHxlbnwwfHx8fDE3NjI1MDQ1MzN8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "professional headshot"
+    },
+    {
+      "id": "project-1",
+      "description": "Screenshot of a modern e-commerce website.",
+      "imageUrl": "https://images.unsplash.com/photo-1597534458220-9fb4969f2df5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHx3ZWJzaXRlJTIwZGVzaWdufGVufDB8fHx8MTc2MjU4MjgyMHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "website design"
+    },
+    {
+      "id": "project-2",
+      "description": "A dashboard with various charts and graphs.",
+      "imageUrl": "https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxkYXRhJTIwZGFzaGJvYXJkfGVufDB8fHx8MTc2MjUxOTc3M3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "data dashboard"
+    },
+    {
+      "id": "project-3",
+      "description": "A clean and modern software-as-a-service landing page.",
+      "imageUrl": "https://images.unsplash.com/flagged/photo-1551301622-6fa51afe75a9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxsYW5kaW5nJTIwcGFnZXxlbnwwfHx8fDE3NjI1ODU0NjZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "landing page"
+    },
+    {
+      "id": "project-4",
+      "description": "UI of a mobile banking application.",
+      "imageUrl": "https://images.unsplash.com/photo-1512428559087-560fa5ceab42?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxtb2JpbGUlMjBhcHB8ZW58MHx8fHwxNzYyNTczMTE4fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "mobile app"
+    },
+    {
+      "id": "project-5",
+      "description": "Interface of an AI chatbot.",
+      "imageUrl": "https://images.unsplash.com/photo-1762330467475-a565d04e1808?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxjaGF0Ym90JTIwaW50ZXJmYWNlfGVufDB8fHx8MTc2MjU4MDAyMnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "chatbot interface"
+    },
+    {
+      "id": "project-6",
+      "description": "A minimalist blog layout.",
+      "imageUrl": "https://images.unsplash.com/photo-1739614208020-5893b0cf9276?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxibG9nJTIwbGF5b3V0fGVufDB8fHx8MTc2MjUzNDk1Mnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "blog layout"
+    }
+  ]
 }
