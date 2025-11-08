@@ -1,0 +1,102 @@
+/**
+ * @fileOverview Firestore Security Rules for the AzurePrint portfolio website.
+ *
+ * Core Philosophy:
+ * This ruleset enforces a strict user-ownership model for user profiles and projects,
+ * ensuring that only authenticated users can access and modify their own data.
+ * Contact form submissions are restricted, and likely controlled via backend logic,
+ * with the security rules acting as a secondary layer of defense.
+ *
+ * Data Structure:
+ * - /users/{userId}/profile: Stores user profile information. Only the user can access their own profile.
+ * - /users/{userId}/projects/{projectId}: Stores projects associated with a user. Only the user can access their projects.
+ * - /contact_form_submissions/{submissionId}: Stores contact form submissions. Access controlled at the collection level,
+ *   potentially restricted to admin roles handled by the backend.
+ *
+ * Key Security Decisions:
+ * - User listing is implicitly disallowed by the absence of a top-level /users collection.
+ * - Contact form submissions are secured but likely managed by backend processes. These rules act as a secondary level of validation.
+ * - The rules prioritize authorization and relational integrity, but do not enforce strict schema validation for rapid prototyping.
+ *
+ * Denormalization for Authorization:
+ * - The data structure avoids the need for `get()` calls by nesting projects under user profiles,
+ *   making ownership clear via path-based rules.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /**
+     * @description Controls access to user profile data.
+     * @path /users/{userId}/profile
+     * @allow (create) User with ID 'user123' creates their own profile with matching ID.
+     *   Request: { auth: { uid: 'user123' }, resource.data: { id: 'user123', fullName: 'John Doe', ... } }
+     * @allow (get, update, delete) User with ID 'user123' reads/updates/deletes their own profile.
+     *   Request: { auth: { uid: 'user123' } }
+     * @deny (create) User with ID 'user456' attempts to create a profile for 'user123'.
+     *   Request: { auth: { uid: 'user456' }, resource.data: { id: 'user123', ... } }
+     * @deny (get, update, delete) User with ID 'user456' attempts to read/update/delete 'user123's profile.
+     *   Request: { auth: { uid: 'user456' } }
+     * @principle Enforces document ownership for all operations on user profiles.
+     */
+    match /users/{userId}/profile {
+      function isOwner(userId) {
+        return request.auth != null && request.auth.uid == userId;
+      }
+      function isExistingOwner(userId) {
+        return isOwner(userId) && resource != null;
+      }
+
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isOwner(userId) && request.resource.data.id == userId;
+      allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Controls access to project data associated with a user.
+     * @path /users/{userId}/projects/{projectId}
+     * @allow (create) User with ID 'user123' creates a project under their own user ID.
+     *   Request: { auth: { uid: 'user123' }, resource.data: { userProfileId: 'user123', ... } }
+     * @allow (get, update, delete) User with ID 'user123' reads/updates/deletes a project under their own user ID.
+     *   Request: { auth: { uid: 'user123' } }
+     * @deny (create) User with ID 'user456' attempts to create a project under user 'user123'.
+     *   Request: { auth: { uid: 'user456' }, resource.data: { userProfileId: 'user123', ... } }
+     * @deny (get, update, delete) User with ID 'user456' attempts to read/update/delete a project under user 'user123'.
+     *   Request: { auth: { uid: 'user456' } }
+     * @principle Enforces document ownership for all operations on user projects.
+     */
+    match /users/{userId}/projects/{projectId} {
+       function isOwner(userId) {
+        return request.auth != null && request.auth.uid == userId;
+      }
+      function isExistingOwner(userId) {
+        return isOwner(userId) && resource != null;
+      }
+
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isOwner(userId) && request.resource.data.userProfileId == userId;
+      allow update: if isExistingOwner(userId) && request.resource.data.userProfileId == resource.data.userProfileId;
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Controls access to contact form submissions.  Access is open for create operations.
+     * @path /contact_form_submissions/{submissionId}
+     * @allow (create) Any user can submit a contact form.
+     *   Request: { auth: { uid: 'user123' }, resource.data: { ... } }
+     * @deny (get, list, update, delete) No direct client access to submissions.
+     *   Request: { auth: { uid: 'user123' } }
+     * @principle Restricts general client access to contact form submissions, managed by backend logic.
+     */
+    match /contact_form_submissions/{submissionId} {
+      allow get: if false;
+      allow list: if false;
+      allow create: if true;
+      allow update: if false;
+      allow delete: if false;
+    }
+  }
+}
