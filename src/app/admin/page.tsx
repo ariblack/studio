@@ -1,8 +1,12 @@
+'use client';
+
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { projects } from "@/lib/data";
 import { DollarSign, Users, Briefcase, Activity } from "lucide-react";
+import { useCollection, useFirebase, useMemoFirebase } from '@/firebase';
+import { collection, query } from 'firebase/firestore';
+import type { Project } from '@/lib/data';
 
 const stats = [
     { title: "Total Revenue", value: "$45,231.89", icon: <DollarSign className="h-4 w-4 text-muted-foreground" />, change: "+20.1% from last month" },
@@ -12,6 +16,15 @@ const stats = [
 ];
 
 export default function AdminPage() {
+    const { firestore, user } = useFirebase();
+
+    const projectsQuery = useMemoFirebase(() => {
+        if (!user) return null;
+        return query(collection(firestore, 'users', user.uid, 'projects'));
+    }, [firestore, user]);
+
+    const { data: projects, isLoading } = useCollection<Project>(projectsQuery);
+
     return (
         <div className="space-y-8">
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -44,7 +57,12 @@ export default function AdminPage() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {projects.slice(0, 5).map((project) => (
+                            {isLoading && (
+                                <TableRow>
+                                    <TableCell colSpan={3} className="text-center">Loading projects...</TableCell>
+                                </TableRow>
+                            )}
+                            {projects && projects.slice(0, 5).map((project) => (
                                 <TableRow key={project.id}>
                                     <TableCell>
                                         <div className="font-medium">{project.title}</div>
@@ -62,6 +80,11 @@ export default function AdminPage() {
                                     </TableCell>
                                 </TableRow>
                             ))}
+                            {!isLoading && (!projects || projects.length === 0) && (
+                                <TableRow>
+                                    <TableCell colSpan={3} className="text-center">No projects found.</TableCell>
+                                </TableRow>
+                            )}
                         </TableBody>
                     </Table>
                 </CardContent>
