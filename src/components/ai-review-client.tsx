@@ -1,6 +1,7 @@
 "use client";
 
-import { useFormState, useFormStatus } from "react-dom";
+import { useActionState } from "react";
+import { useFormStatus } from "react-dom";
 import { useEffect, useRef } from "react";
 import { reviewPortfolioAction } from "@/app/actions";
 import { Button } from "./ui/button";
@@ -77,7 +78,7 @@ function ReviewResult({ state }: { state: typeof initialState }) {
 
 
 export function AiReviewClient() {
-  const [state, formAction] = useFormState(reviewPortfolioAction, initialState);
+  const [state, formAction] = useActionState(reviewPortfolioAction, initialState);
   const formRef = useRef<HTMLFormElement>(null);
   const resultRef = useRef<HTMLDivElement>(null);
 
