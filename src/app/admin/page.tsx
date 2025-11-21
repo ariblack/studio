@@ -25,14 +25,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { projects as initialProjects } from '@/lib/data';
-<<<<<<< HEAD
 import Link from 'next/link';
-=======
-<<<<<<< HEAD
-=======
-import Link from 'next/link';
->>>>>>> a59fc66 (Try fixing this error: `Build Error: Parsing ecmascript source code fail)
->>>>>>> 2c4e753 (Try fixing this error: `Build Error: Parsing ecmascript source code fail)
 
 const stats = [
     { title: "Total Revenue", value: "$45,231.89", icon: <DollarSign className="h-4 w-4 text-muted-foreground" />, change: "+20.1% from last month" },
@@ -68,15 +61,7 @@ export default function AdminPage() {
         if (selectedProject) {
             setProjects(projects.map(p => p.id === projectToSave.id ? projectToSave : p));
         } else {
-<<<<<<< HEAD
             setProjects([...projects, { ...projectToSave, id: `proj-${Date.now()}` }]);
-=======
-<<<<<<< HEAD
-            setProjects([...projects, projectToSave]);
-=======
-            setProjects([...projects, { ...projectToSave, id: `proj-${Date.now()}` }]);
->>>>>>> a59fc66 (Try fixing this error: `Build Error: Parsing ecmascript source code fail)
->>>>>>> 2c4e753 (Try fixing this error: `Build Error: Parsing ecmascript source code fail)
         }
         setIsDialogOpen(false);
         setSelectedProject(null);
@@ -113,15 +98,7 @@ export default function AdminPage() {
                 <CardHeader className="flex flex-row items-center justify-between">
                     <div>
                         <CardTitle>Recent Projects</CardTitle>
-<<<<<<< HEAD
                         <CardDescription>A list of your most recent projects. <Link href="/admin/projects" className="text-primary hover:underline">View all</Link>.</CardDescription>
-=======
-<<<<<<< HEAD
-                        <CardDescription>A list of your projects. Changes here are not persisted.</CardDescription>
-=======
-                        <CardDescription>A list of your most recent projects. <Link href="/admin/projects" className="text-primary hover:underline">View all</Link>.</CardDescription>
->>>>>>> a59fc66 (Try fixing this error: `Build Error: Parsing ecmascript source code fail)
->>>>>>> 2c4e753 (Try fixing this error: `Build Error: Parsing ecmascript source code fail)
                     </div>
                     <Button size="sm" onClick={handleAddProject}>
                         <PlusCircle className="mr-2 h-4 w-4" />
@@ -186,25 +163,28 @@ export default function AdminPage() {
                 </CardContent>
             </Card>
 
-            <><EditProjectDialog
-                    isOpen={isDialogOpen}
-                    onClose={() => setIsDialogOpen(false)}
-                    project={selectedProject}
-                    onSave={handleSaveProject} /><AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-                        <AlertDialogContent>
-                            <AlertDialogHeader>
-                                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                    This action cannot be undone. This will permanently delete the
-                                    project from your portfolio.
-                                </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction onClick={confirmDelete}>Continue</AlertDialogAction>
-                            </AlertDialogFooter>
-                        </AlertDialogContent>
-                    </AlertDialog></>
+            <EditProjectDialog
+                isOpen={isDialogOpen}
+                onClose={() => setIsDialogOpen(false)}
+                project={selectedProject}
+                onSave={handleSaveProject}
+            />
+            
+            <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            This action cannot be undone. This will permanently delete the
+                            project from your portfolio.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={confirmDelete}>Continue</AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
 
         </div>
     );
