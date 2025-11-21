@@ -22,7 +22,7 @@ interface EditProjectDialogProps {
   onSave: (project: Project) => void;
 }
 
-const emptyProject: Omit<Project, 'id' | 'userProfileId'> = {
+const emptyProject: Omit<Project, 'id' > = {
   title: '',
   description: '',
   image: 'project-1', // Default placeholder
@@ -37,16 +37,13 @@ export function EditProjectDialog({
   onClose,
   onSave,
 }: EditProjectDialogProps) {
-  const [formData, setFormData] = useState<Omit<Project, 'id' | 'userProfileId'>>(
+  const [formData, setFormData] = useState<Omit<Project, 'id'>>(
     project || emptyProject
   );
 
   useEffect(() => {
-    // When the project prop changes, update the form data.
-    // This handles both opening the dialog for a new project (project is null)
-    // and for an existing project.
     setFormData(project ? { ...project } : { ...emptyProject });
-  }, [project, isOpen]); // Rerun effect when dialog opens or project changes
+  }, [project, isOpen]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -62,7 +59,6 @@ export function EditProjectDialog({
   const handleSave = () => {
     const finalProject = {
       ...formData,
-      // If it's a new project, create a new ID, otherwise use existing one.
       id: project?.id || new Date().getTime().toString(),
     };
     onSave(finalProject as Project);
