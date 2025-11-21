@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from '@/components/ui/button';
-import { DollarSign, Users, Briefcase, Activity, PlusCircle, MoreHorizontal, Trash2, Edit } from "lucide-react";
+import { PlusCircle, MoreHorizontal, Trash2, Edit } from "lucide-react";
 import type { Project } from '@/lib/data';
 import { EditProjectDialog } from '@/components/edit-project-dialog';
 import {
@@ -25,16 +25,8 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { projects as initialProjects } from '@/lib/data';
-import Link from 'next/link';
 
-const stats = [
-    { title: "Total Revenue", value: "$45,231.89", icon: <DollarSign className="h-4 w-4 text-muted-foreground" />, change: "+20.1% from last month" },
-    { title: "Active Users", value: "+2350", icon: <Users className="h-4 w-4 text-muted-foreground" />, change: "+180.1% from last month" },
-    { title: "Projects", value: "+12", icon: <Briefcase className="h-4 w-4 text-muted-foreground" />, change: "+19% from last month" },
-    { title: "Reviews", value: "+573", icon: <Activity className="h-4 w-4 text-muted-foreground" />, change: "+201 since last hour" },
-];
-
-export default function AdminPage() {
+export default function ProjectsPage() {
     const [projects, setProjects] = useState<Project[]>(initialProjects);
     const isLoading = false;
 
@@ -61,7 +53,7 @@ export default function AdminPage() {
         if (selectedProject) {
             setProjects(projects.map(p => p.id === projectToSave.id ? projectToSave : p));
         } else {
-            setProjects([...projects, { ...projectToSave, id: `proj-${Date.now()}` }]);
+             setProjects([...projects, { ...projectToSave, id: `proj-${Date.now()}` }]);
         }
         setIsDialogOpen(false);
         setSelectedProject(null);
@@ -77,34 +69,17 @@ export default function AdminPage() {
     return (
         <div className="space-y-8">
             <header className="flex items-center justify-between">
-                <h1 className="text-2xl font-bold">Dashboard</h1>
+                 <div>
+                    <h1 className="text-2xl font-bold">Projects</h1>
+                    <p className="text-muted-foreground">Manage your portfolio projects.</p>
+                </div>
+                <Button size="sm" onClick={handleAddProject}>
+                    <PlusCircle className="mr-2 h-4 w-4" />
+                    Add Project
+                </Button>
             </header>
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                {stats.map((stat) => (
-                    <Card key={stat.title}>
-                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
-                            {stat.icon}
-                        </CardHeader>
-                        <CardContent>
-                            <div className="text-2xl font-bold">{stat.value}</div>
-                            <p className="text-xs text-muted-foreground">{stat.change}</p>
-                        </CardContent>
-                    </Card>
-                ))}
-            </div>
 
             <Card>
-                <CardHeader className="flex flex-row items-center justify-between">
-                    <div>
-                        <CardTitle>Recent Projects</CardTitle>
-                        <CardDescription>A list of your most recent projects. <Link href="/admin/projects" className="text-primary hover:underline">View all</Link>.</CardDescription>
-                    </div>
-                    <Button size="sm" onClick={handleAddProject}>
-                        <PlusCircle className="mr-2 h-4 w-4" />
-                        Add Project
-                    </Button>
-                </CardHeader>
                 <CardContent>
                     <Table>
                         <TableHeader>
@@ -121,7 +96,7 @@ export default function AdminPage() {
                                     <TableCell colSpan={4} className="text-center">Loading projects...</TableCell>
                                 </TableRow>
                             )}
-                            {projects && projects.slice(0, 5).map((project) => (
+                            {projects && projects.map((project) => (
                                 <TableRow key={project.id}>
                                     <TableCell>
                                         <div className="font-medium">{project.title}</div>
@@ -155,7 +130,7 @@ export default function AdminPage() {
                             ))}
                             {!isLoading && (!projects || projects.length === 0) && (
                                 <TableRow>
-                                    <TableCell colSpan={4} className="text-center">No projects found.</TableCell>
+                                    <TableCell colSpan={4} className="text-center">No projects found. Add your first project to get started.</TableCell>
                                 </TableRow>
                             )}
                         </TableBody>

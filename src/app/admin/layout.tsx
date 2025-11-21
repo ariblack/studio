@@ -22,6 +22,7 @@ import {
   import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
   import { profile } from '@/lib/data';
   import { PlaceHolderImages } from '@/lib/placeholder-images';
+  import { AdminNav } from '@/components/admin-nav';
   
   function getImageUrl(id: string) {
     return PlaceHolderImages.find(img => img.id === id)?.imageUrl || '';
@@ -39,32 +40,7 @@ import {
                         <span className="text-lg font-semibold">Admin Panel</span>
                     </div>
                 </SidebarHeader>
-                <SidebarMenu>
-                    <SidebarMenuItem>
-                        <SidebarMenuButton href="/admin" isActive={true} tooltip="Dashboard">
-                        <Home />
-                        Dashboard
-                        </SidebarMenuButton>
-                    </SidebarMenuItem>
-                    <SidebarMenuItem>
-                        <SidebarMenuButton href="#" tooltip="Users">
-                        <Users />
-                        Users
-                        </SidebarMenuButton>
-                    </SidebarMenuItem>
-                    <SidebarMenuItem>
-                        <SidebarMenuButton href="#" tooltip="Projects">
-                        <Briefcase />
-                        Projects
-                        </SidebarMenuButton>
-                    </SidebarMenuItem>
-                    <SidebarMenuItem>
-                        <SidebarMenuButton href="#" tooltip="Settings">
-                        <Settings />
-                        Settings
-                        </SidebarMenuButton>
-                    </SidebarMenuItem>
-                </SidebarMenu>
+                <AdminNav />
                 </SidebarContent>
                 <SidebarFooter>
                     <div className='flex items-center gap-3'>
@@ -83,14 +59,9 @@ import {
                 </SidebarFooter>
             </Sidebar>
           <SidebarInset>
-            <header className="flex items-center justify-between p-4 border-b">
-                <SidebarTrigger />
-                <h1 className="text-xl font-semibold">Dashboard</h1>
-            </header>
             <main className="p-4">{children}</main>
           </SidebarInset>
         </div>
       </SidebarProvider>
     );
   }
-  
