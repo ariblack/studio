@@ -1,3 +1,5 @@
+'use client';
+
 import {
     SidebarProvider,
     Sidebar,
@@ -53,8 +55,10 @@ import {
                             <span className="text-xs text-muted-foreground">{profile.title.split('&')[0]}</span>
                         </div>
                     </div>
-                    <SidebarMenuButton ref="/" tooltip="Logout">
-                        <LogOut />
+                    <SidebarMenuButton tooltip="Logout" asChild>
+                        <Link href="/">
+                            <LogOut />
+                        </Link>
                     </SidebarMenuButton>
                 </SidebarFooter>
             </Sidebar>
