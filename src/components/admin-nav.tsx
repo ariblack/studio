@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
   SidebarMenu,
@@ -23,12 +24,14 @@ export function AdminNav() {
       {navLinks.map((link) => (
         <SidebarMenuItem key={link.href}>
           <SidebarMenuButton
-            href={link.href}
+            asChild
             isActive={pathname === link.href}
             tooltip={link.label}
           >
-            {link.icon}
-            {link.label}
+            <Link href={link.href}>
+              {link.icon}
+              {link.label}
+            </Link>
           </SidebarMenuButton>
         </SidebarMenuItem>
       ))}
