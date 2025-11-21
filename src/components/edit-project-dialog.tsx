@@ -37,12 +37,14 @@ export function EditProjectDialog({
   onClose,
   onSave,
 }: EditProjectDialogProps) {
-  const [formData, setFormData] = useState<Omit<Project, 'id'>>(
+  const [formData, setFormData] = useState<Omit<Project, 'id' | 'image'> & { image?: string }> (
     project || emptyProject
   );
 
   useEffect(() => {
-    setFormData(project ? { ...project } : { ...emptyProject });
+    if (isOpen) {
+      setFormData(project ? { ...project } : { ...emptyProject });
+    }
   }, [project, isOpen]);
 
   const handleChange = (
@@ -59,7 +61,8 @@ export function EditProjectDialog({
   const handleSave = () => {
     const finalProject = {
       ...formData,
-      id: project?.id || new Date().getTime().toString(),
+      id: project?.id || `proj-${Date.now()}`,
+      image: project?.image || 'project-1',
     };
     onSave(finalProject as Project);
     onClose();

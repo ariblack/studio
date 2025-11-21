@@ -23,16 +23,18 @@ export function AdminNav() {
     <SidebarMenu>
       {navLinks.map((link) => (
         <SidebarMenuItem key={link.href}>
-          <SidebarMenuButton
-            asChild
-            isActive={pathname === link.href}
-            tooltip={link.label}
-          >
-            <Link href={link.href}>
-              {link.icon}
-              {link.label}
-            </Link>
-          </SidebarMenuButton>
+          <Link href={link.href} passHref>
+            <SidebarMenuButton
+              asChild
+              isActive={pathname === link.href}
+              tooltip={link.label}
+            >
+              <div>
+                {link.icon}
+                {link.label}
+              </div>
+            </SidebarMenuButton>
+          </Link>
         </SidebarMenuItem>
       ))}
     </SidebarMenu>

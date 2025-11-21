@@ -4,19 +4,12 @@ import {
     SidebarProvider,
     Sidebar,
     SidebarHeader,
-    SidebarTrigger,
     SidebarContent,
     SidebarMenu,
-    SidebarMenuItem,
-    SidebarMenuButton,
     SidebarFooter,
     SidebarInset,
   } from '@/components/ui/sidebar';
   import {
-    Home,
-    Users,
-    Briefcase,
-    Settings,
     Feather,
     LogOut,
   } from 'lucide-react';
@@ -27,7 +20,8 @@ import {
   import { AdminNav } from '@/components/admin-nav';
   
   function getImageUrl(id: string) {
-    return PlaceHolderImages.find(img => img.id === id)?.imageUrl || '';
+    const image = PlaceHolderImages.find(img => img.id === id);
+    return image ? image.imageUrl : '';
   }
   
   export default function AdminLayout({children}: {children: React.ReactNode}) {
@@ -55,11 +49,12 @@ import {
                             <span className="text-xs text-muted-foreground">{profile.title.split('&')[0]}</span>
                         </div>
                     </div>
-                    <SidebarMenuButton tooltip="Logout" asChild>
-                        <Link href="/">
-                            <LogOut />
-                        </Link>
-                    </SidebarMenuButton>
+                    <SidebarMenu>
+                      <Link href="/" className='flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground'>
+                        <LogOut />
+                        <span>Logout</span>
+                      </Link>
+                    </SidebarMenu>
                 </SidebarFooter>
             </Sidebar>
           <SidebarInset>

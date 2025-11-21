@@ -58,7 +58,7 @@ export default function AdminPage() {
     }
 
     const handleSaveProject = (projectToSave: Project) => {
-        if (selectedProject) {
+        if (selectedProject && projectToSave.id) {
             setProjects(projects.map(p => p.id === projectToSave.id ? projectToSave : p));
         } else {
             setProjects([...projects, { ...projectToSave, id: `proj-${Date.now()}` }]);
