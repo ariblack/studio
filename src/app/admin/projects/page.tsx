@@ -50,7 +50,7 @@ export default function ProjectsPage() {
     }
 
     const handleSaveProject = (projectToSave: Project) => {
-        if (selectedProject) {
+        if (selectedProject && projectToSave.id) {
             setProjects(projects.map(p => p.id === projectToSave.id ? projectToSave : p));
         } else {
              setProjects([...projects, { ...projectToSave, id: `proj-${Date.now()}` }]);
@@ -148,15 +148,15 @@ export default function ProjectsPage() {
             <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
-                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                        This action cannot be undone. This will permanently delete the
-                        project from your portfolio.
-                    </AlertDialogDescription>
+                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            This action cannot be undone. This will permanently delete the
+                            project from your portfolio.
+                        </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={confirmDelete}>Continue</AlertDialogAction>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={confirmDelete}>Continue</AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
