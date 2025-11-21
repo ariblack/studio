@@ -53,7 +53,7 @@ import {
                             <span className="text-xs text-muted-foreground">{profile.title.split('&')[0]}</span>
                         </div>
                     </div>
-                    <SidebarMenuButton href="/" tooltip="Logout">
+                    <SidebarMenuButton ref="/" tooltip="Logout">
                         <LogOut />
                     </SidebarMenuButton>
                 </SidebarFooter>
