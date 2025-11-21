@@ -6,8 +6,6 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Button } from '@/components/ui/button';
 import { DollarSign, Users, Briefcase, Activity, PlusCircle, MoreHorizontal, Trash2, Edit } from "lucide-react";
-import { useCollection, useFirebase, useMemoFirebase } from '@/firebase';
-import { collection, query, doc } from 'firebase/firestore';
 import type { Project } from '@/lib/data';
 import { EditProjectDialog } from '@/components/edit-project-dialog';
 import {
@@ -26,7 +24,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { setDocumentNonBlocking, deleteDocumentNonBlocking } from '@/firebase/non-blocking-updates';
+import { projects as initialProjects } from '@/lib/data';
 
 const stats = [
     { title: "Total Revenue", value: "$45,231.89", icon: <DollarSign className="h-4 w-4 text-muted-foreground" />, change: "+20.1% from last month" },
@@ -36,14 +34,8 @@ const stats = [
 ];
 
 export default function AdminPage() {
-    const { firestore, user } = useFirebase();
-
-    const projectsQuery = useMemoFirebase(() => {
-        if (!user) return null;
-        return query(collection(firestore, 'users', user.uid, 'projects'));
-    }, [firestore, user]);
-
-    const { data: projects, isLoading } = useCollection<Project>(projectsQuery);
+    const [projects, setProjects] = useState<Project[]>(initialProjects);
+    const isLoading = false;
 
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -64,24 +56,19 @@ export default function AdminPage() {
         setIsDeleteDialogOpen(true);
     }
 
-    const handleSaveProject = (project: Project) => {
-        if (!user || !firestore) return;
-        const projectRef = doc(firestore, 'users', user.uid, 'projects', project.id);
-        
-        // This is a "non-blocking" operation. We don't wait for it to complete.
-        setDocumentNonBlocking(projectRef, project, { merge: true });
-        
+    const handleSaveProject = (projectToSave: Project) => {
+        if (selectedProject) {
+            setProjects(projects.map(p => p.id === projectToSave.id ? projectToSave : p));
+        } else {
+            setProjects([...projects, projectToSave]);
+        }
         setIsDialogOpen(false);
         setSelectedProject(null);
     };
 
     const confirmDelete = () => {
-        if (!user || !firestore || !selectedProject) return;
-        const projectRef = doc(firestore, 'users', user.uid, 'projects', selectedProject.id);
-
-        // This is a "non-blocking" operation.
-        deleteDocumentNonBlocking(projectRef);
-
+        if (!selectedProject) return;
+        setProjects(projects.filter(p => p.id !== selectedProject.id));
         setIsDeleteDialogOpen(false);
         setSelectedProject(null);
     };
@@ -107,7 +94,7 @@ export default function AdminPage() {
                 <CardHeader className="flex flex-row items-center justify-between">
                     <div>
                         <CardTitle>Recent Projects</CardTitle>
-                        <CardDescription>A list of the most recently added projects.</CardDescription>
+                        <CardDescription>A list of your projects. Changes here are not persisted.</CardDescription>
                     </div>
                     <Button size="sm" onClick={handleAddProject}>
                         <PlusCircle className="mr-2 h-4 w-4" />

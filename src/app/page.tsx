@@ -8,14 +8,12 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from '@/components/ui/badge';
 import { AiReviewClient } from '@/components/ai-review-client';
 import { ContactForm } from '@/components/contact-form';
-import { profile } from '@/lib/data';
+import { profile, projects } from '@/lib/data';
 import type { Project } from '@/lib/data';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Github, Linkedin, Twitter, ArrowRight } from 'lucide-react';
-import { useCollection, useFirebase, useMemoFirebase } from '@/firebase';
-import { collection, query } from 'firebase/firestore';
 
 const socialIcons = {
   github: <Github />,
@@ -32,14 +30,7 @@ function getImageHint(id: string) {
 }
 
 export default function Home() {
-  const { firestore, user } = useFirebase();
-
-  const projectsQuery = useMemoFirebase(() => {
-    if (!user) return null;
-    return query(collection(firestore, 'users', user.uid, 'projects'));
-  }, [firestore, user]);
-
-  const { data: projects, isLoading } = useCollection<Project>(projectsQuery);
+  const isLoading = false;
 
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground">
