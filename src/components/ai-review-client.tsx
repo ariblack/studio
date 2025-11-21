@@ -11,11 +11,16 @@ import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 import { Bot, Sparkles } from "lucide-react";
 import { Skeleton } from "./ui/skeleton";
 
-const initialState: {
+type ActionState = {
   message: string;
   data: string | null;
-  errors: { portfolioText?: string[], _server?: string[] } | null;
-} = {
+  errors: {
+    portfolioText?: string[];
+    _server?: string[];
+  } | null;
+};
+
+const initialState: ActionState = {
   message: "",
   data: null,
   errors: null,
@@ -30,7 +35,7 @@ function SubmitButton() {
   );
 }
 
-function ReviewResult({ state }: { state: typeof initialState }) {
+function ReviewResult({ state }: { state: ActionState }) {
   const { pending } = useFormStatus();
 
   if (pending) {
